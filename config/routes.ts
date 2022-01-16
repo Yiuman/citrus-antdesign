@@ -43,8 +43,15 @@
     ],
   },
   {
+    path: '/crud',
+    name: 'crudTest',
+    component: '../components/CRUDTable',
+    uri: '/rest/users',
+    abs: 123,
+  },
+  {
     path: '/',
-    redirect: '/welcome',
+    redirect: '/crud',
   },
   {
     component: './404',

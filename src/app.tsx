@@ -86,7 +86,6 @@ const responseDestructionInterceptor = async (response: Response) => {
   if (result.code !== 0) {
     throw new Error(result.message);
   }
-  console.warn(result.data);
   return { ...result.data, success: 'ok' };
 };
 

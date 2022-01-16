@@ -1,5 +1,5 @@
 import { request } from 'umi';
-import createCRUD from '../crud/api';
+import createCRUD from '../crud';
 
 /**
  * 获取当前的用户信息

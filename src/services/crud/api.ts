@@ -1,5 +1,7 @@
 import { request } from 'umi';
-function createCRUD<ENTITY, KEY>(restUrl: string): API.CRUD<ENTITY, KEY> {
+import qs from 'qs';
+
+export default function createCRUD<ENTITY, KEY>(restUrl: string): API.CRUD<ENTITY, KEY> {
   return {
     get: (key: KEY) => {
       return request<ENTITY>(`${restUrl}/${key}`, { method: 'GET' });
@@ -17,7 +19,10 @@ function createCRUD<ENTITY, KEY>(restUrl: string): API.CRUD<ENTITY, KEY> {
       return request<ENTITY[]>(`${restUrl}/list`, { method: 'GET', queryParams });
     },
     page: (queryParams: any) => {
-      return request<API.Page<ENTITY>>(`${restUrl}`, { method: 'GET', queryParams });
+      return request<API.Page<ENTITY>>(
+        `${restUrl}?${qs.stringify(queryParams, { arrayFormat: 'repeat' })}`,
+        { method: 'GET' },
+      );
     },
     exp: (queryParams: any) => {
       return request<Blob>(`${restUrl}/exp`, { method: 'GET', queryParams });
@@ -27,4 +32,3 @@ function createCRUD<ENTITY, KEY>(restUrl: string): API.CRUD<ENTITY, KEY> {
     },
   };
 }
-export default createCRUD;

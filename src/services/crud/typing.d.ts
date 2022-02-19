@@ -3,7 +3,7 @@ declare namespace API {
     //主键名称
     itemKey: string;
     //扩展数据
-    recordExtend: Record<string, Record<string, any>>;
+    extension: Record<string, Record<string, any>>;
     //视图
     view: TableView | any;
     //分页记录
@@ -18,24 +18,25 @@ declare namespace API {
 
   type Widget = {
     text: string;
-    key;
     model: any;
     key: string;
     properties?: Record<string, any>;
     widgetName: string;
   };
 
-  type Header = {
+  type Column = {
     text: string;
-    value: string;
+    model: string;
     align?: string;
     sortable?: boolean;
     width: number | string | undefined;
     hidden: boolean | undefined;
+    widget: Widget | undefined;
   };
 
-  type TableView = {
-    headers: Header[];
+  type TableView<ENTITY> = {
+    columns: Column[] | undefined;
+    data: Page<ENTITY>;
     actions: Widget[];
     buttons: Widget[];
     widgets: Widget[];
@@ -44,6 +45,8 @@ declare namespace API {
   type PageQuery = {
     size: number;
     current: number;
+    sortBy: string | undefined;
+    sortDesc: boolean | undefined;
   };
 
   type CRUD<ENTITY, KEY> = {
@@ -59,6 +62,7 @@ declare namespace API {
     list: (queryParams?: any) => Promise<ENTITY[]>;
     //分页查询
     page: (queryParams?: PageQuery & Record<string, any>) => Promise<Page<ENTITY>>;
+    tableView: (queryParams?: PageQuery & Record<string, any>) => Promise<TableView<ENTITY>>;
     //导出
     exp: (queryParams: any) => Promise<Blob>;
     //导入

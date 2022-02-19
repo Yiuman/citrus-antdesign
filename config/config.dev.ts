@@ -10,6 +10,12 @@ export default defineConfig({
     // https://github.com/zthxxx/react-dev-inspector
     'react-dev-inspector/plugins/umi/react-inspector',
   ],
+  locale: {
+    default: 'zh-cn',
+    antd: true,
+    // default true, when it is true, will use `navigator.language` overwrite default
+    baseNavigator: true,
+  },
   theme: {
     ...darkTheme,
     'root-entry-name': 'variable',

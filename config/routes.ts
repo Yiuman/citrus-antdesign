@@ -42,12 +42,15 @@
       },
     ],
   },
+  // {
+  //   path: '/crud',
+  //   name: 'crudTest',
+  //   component: '../components/RouteCRUDTable',
+  //   uri: '/rest/users',
+  // },
   {
-    path: '/crud',
-    name: 'crudTest',
-    component: '../components/CRUDTable',
-    uri: '/rest/users',
-    abs: 123,
+    path: '/crud/:id',
+    component: '../components/RouteCRUDTable',
   },
   {
     path: '/',

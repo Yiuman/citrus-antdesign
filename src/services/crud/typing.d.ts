@@ -62,7 +62,7 @@ declare namespace API {
     list: (queryParams?: any) => Promise<ENTITY[]>;
     //分页查询
     page: (queryParams?: PageQuery & Record<string, any>) => Promise<Page<ENTITY>>;
-    tableView: (queryParams?: PageQuery & Record<string, any>) => Promise<TableView<ENTITY>>;
+    view: (queryParams?: PageQuery & Record<string, any>) => Promise<TableView<ENTITY>>;
     //导出
     exp: (queryParams: any) => Promise<Blob>;
     //导入

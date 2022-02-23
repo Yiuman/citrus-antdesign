@@ -6,7 +6,7 @@ import RightContent from '@/components/RightContent';
 
 import type { RequestConfig } from 'umi';
 import type { RequestOptionsInit } from 'umi-request';
-import { getUserOnlineInfo } from './services/user/api';
+import { getUserMenus, getUserOnlineInfo } from './services/user/api';
 const loginPath = '/user/login';
 
 /** 获取用户信息比较慢的时候会展示一个 loading */
@@ -25,8 +25,7 @@ export async function getInitialState(): Promise<{
 }> {
   const fetchUserInfo = async () => {
     try {
-      const userInfo = await getUserOnlineInfo();
-      return userInfo;
+      return await getUserOnlineInfo();
     } catch (error) {
       history.push(loginPath);
     }
@@ -35,7 +34,6 @@ export async function getInitialState(): Promise<{
   // 如果是登录页面，不执行
   if (history.location.pathname !== loginPath) {
     const currentUser = await fetchUserInfo();
-    console.warn(currentUser);
     return {
       fetchUserInfo,
       currentUser,
@@ -60,11 +58,11 @@ export const layout: RunTimeLayoutConfig = ({ initialState }) => {
         history.push(loginPath);
       }
     },
-    menuHeaderRender: undefined,
-    // 自定义 403 页面
-    // unAccessible: <div>unAccessible</div>,
-    // 增加一个 loading 的状态
     ...initialState?.settings,
+    menuDataRender: () => {
+      return getUserMenus(initialState?.currentUser);
+    },
+    iconfontUrl: '//at.alicdn.com/t/font_3199672_bgrlzwb1z5l.js',
   };
 };
 

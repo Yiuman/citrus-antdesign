@@ -20,6 +20,21 @@ declare namespace API {
     extension?: { [key: string]: any };
   };
 
+  type Resource = {
+    id: string;
+    resourceName: string;
+    resourceId: string;
+    type: number;
+    resourceCode: string | never;
+    parentId: string | never;
+    hidden: boolean;
+    leaf: boolean | never;
+    children: Resource[] | never;
+    component: string | never;
+    icon: string | never;
+    path: string | never;
+  };
+
   type User = {
     uuid: string;
     username?: string;
@@ -30,5 +45,7 @@ declare namespace API {
     avatar?: string;
     status?: number;
     version?: number;
+    menus?: Resource[];
+    unreadCount: number | undefined;
   };
 }

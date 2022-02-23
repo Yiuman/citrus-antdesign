@@ -3,24 +3,20 @@ const Settings: LayoutSettings & {
   pwa?: boolean;
   logo?: string;
 } = {
-  navTheme: 'realDark',
-  splitMenus: false,
-  // 拂晓蓝
+  navTheme: 'light',
   primaryColor: '#1890ff',
-  headerHeight: 48,
-  layout: 'mix',
-  menu: {
-    locale: false,
-  },
+  layout: 'side',
   contentWidth: 'Fluid',
   fixedHeader: true,
   fixSiderbar: true,
-  colorWeak: false,
-  title: 'Nightfish',
   pwa: false,
   logo: 'https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg',
-  iconfontUrl: '',
+  headerHeight: 48,
+  splitMenus: false,
   footerRender: false,
+  menu: {
+    locale: false,
+  },
 };
 
 export default Settings;

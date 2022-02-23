@@ -17,7 +17,6 @@ export type GlobalHeaderRightProps = {
  */
 const loginOut = async () => {
   await logout();
-  console.log(123123);
   const { query = {}, search, pathname } = history.location;
   const { redirect } = query;
   // Note: There may be security issues, please note

@@ -24,7 +24,7 @@ export default function createCRUD<ENTITY, KEY>(restUrl: string): API.CRUD<ENTIT
         { method: 'GET' },
       );
     },
-    tableView: (queryParams: any) => {
+    view: (queryParams?: any) => {
       return request<API.TableView<ENTITY>>(
         `${restUrl}/view?${qs.stringify(queryParams, { arrayFormat: 'repeat' })}`,
         { method: 'GET' },

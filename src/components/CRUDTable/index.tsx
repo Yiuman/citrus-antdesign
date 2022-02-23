@@ -1,78 +1,15 @@
-import React, { useEffect, useState } from 'react';
-import { CRUDProp } from './typing';
+import type { CRUDProp } from './typing';
+import type { SorterResult } from 'antd/lib/table/interface';
+
+import React, { useEffect, useRef, useState } from 'react';
+import useDeepCompareEffect from 'use-deep-compare-effect';
 import createCRUD from '@/services/crud';
 import { Table } from 'antd';
 import useRequest from '@ahooksjs/use-request';
-import { ColumnsType } from 'antd/lib/table';
-
 import WidgetAdapter from '@/adapter';
-import { sortBy } from 'lodash';
-type AlignType = 'left' | 'right' | 'center';
-const getColumnAlignType = (align: string | undefined): AlignType => {
-  if (!align) {
-    return 'center';
-  }
-  switch (align) {
-    case 'start':
-      return 'left';
-    case 'end':
-      return 'right';
-    default:
-      return align as AlignType;
-  }
-};
 
-/**
- * 后台数据转ANTD-TABLE列
- * @param columns  后台表头
- * @returns ANTD-TABLE列
- */
-const toColumns = (columns: API.Column[] | undefined): ColumnsType<any> => {
-  const columnTypes: ColumnsType<any> = [];
-  columns &&
-    columns.forEach((column) => {
-      const title = column.text === 'EDIT-COLUMN' ? '操作' : column.text;
-      columnTypes.push({
-        title: title,
-        dataIndex: column.model,
-        align: getColumnAlignType(column.align),
-        key: column.model,
-        sorter: column.sortable,
-        //设置单元格属性
-        onCell: (record: any) => ({
-          record,
-          title: title,
-          dataIndex: column.model,
-          key: column.model,
-          widgetName: record[column.model].widgetName,
-          value: record[column.model],
-        }),
-      });
-    });
-  return columnTypes;
-};
-
-/**
- * 分页数据转ANT-TABLE表格数据
- * @param pageData 后台分页数据
- * @returns  ANTD-TABLE数据
- */
-const toDatas = (pageData: API.Page<any> | undefined) => {
-  if (!pageData) {
-    return [];
-  }
-  const itemKey: string = pageData.itemKey || 'id';
-  const datas = pageData.records;
-  if (pageData.extension) {
-    return datas.map((record) => {
-      //扩展数据
-      const extData = pageData.extension[record[itemKey]];
-      return { ...record, ...extData, key: record[itemKey] };
-    });
-  }
-
-  return datas;
-};
+import type { AlignType } from '@/components/CRUDTable/utils';
+import { toColumns, toDatas } from '@/components/CRUDTable/utils';
 
 /**
  * 渲染单元格参数定义
@@ -81,6 +18,7 @@ interface RenderCellProps extends React.HTMLAttributes<HTMLElement> {
   key: string;
   dataIndex: string;
   title: any;
+  align: AlignType | undefined;
   record: any;
   value: any;
   index: number;
@@ -88,6 +26,11 @@ interface RenderCellProps extends React.HTMLAttributes<HTMLElement> {
   widgetName: string | undefined;
 }
 
+/**
+ * 渲染小个子
+ * @param props onCell参数
+ * @constructor FC
+ */
 const RenderCell: React.FC<RenderCellProps> = (props: RenderCellProps) => {
   if (props.widgetName) {
     const widgetRender = WidgetAdapter[props.widgetName];
@@ -97,28 +40,44 @@ const RenderCell: React.FC<RenderCellProps> = (props: RenderCellProps) => {
     }
 
     return (
-      <td>
+      <td align={props.align}>
         <div style={{ color: 'red' }}>{jsxElement}</div>
       </td>
     );
   }
-  return <td>{props.children}</td>;
+  return <td align={props.align}>{props.children}</td>;
 };
+
 const CRUDTable: React.FC<CRUDProp> = (props) => {
-  const crudService = createCRUD(props.uri || props?.route?.uri);
+  //分页参数
   const [pageQuery, setPageQuery] = useState<API.PageQuery & Record<string, any>>({
     current: 1,
     size: 10,
     sortBy: undefined,
     sortDesc: undefined,
+    action: props.type,
   });
-  function pageQueryService() {
-    return crudService.tableView(pageQuery);
-  }
-  const { data, loading, run } = useRequest<API.TableView<any>>(pageQueryService);
+
+  //CRUD后台服务类
+  const crudService = useRef<API.CRUD<string, any>>(createCRUD(props.uri));
+  const { data, loading, run } = useRequest<API.TableView<any>>(
+    () => crudService.current.view(pageQuery),
+    { manual: true, debounceInterval: 100 },
+  );
+
   useEffect(() => {
+    crudService.current = createCRUD(props.uri);
     run();
-  }, [pageQuery]);
+  }, [props.uri, run]);
+
+  useEffect(() => {
+    setPageQuery((oldQuery) => ({ ...oldQuery, action: props.type }));
+  }, [props.type]);
+
+  useDeepCompareEffect(() => {
+    run();
+    console.warn('pageQuery');
+  }, [pageQuery, run]);
 
   const pageRecord = data?.data;
   return (
@@ -138,13 +97,13 @@ const CRUDTable: React.FC<CRUDProp> = (props) => {
           total: pageRecord?.total,
         }}
         onChange={(pagination, filters, sorter) => {
+          const sorterResult = sorter as SorterResult<any>;
           setPageQuery({
             ...pageQuery,
             current: pagination.current || 1,
-            sortBy: sorter.field,
-            sortDesc: sorter.order ? Boolean('dscend' === sorter.order) : undefined,
+            sortBy: sorterResult.column ? sorterResult?.columnKey?.toString() : undefined,
+            sortDesc: sorterResult.order ? Boolean(sorterResult.order === 'descend') : undefined,
           });
-          console.warn(pagination, filters, sorter);
         }}
       />
     </div>

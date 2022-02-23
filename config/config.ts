@@ -6,12 +6,13 @@ import defaultSettings from './defaultSettings';
 import proxy from './proxy';
 import routes from './routes';
 const { REACT_APP_ENV } = process.env;
-import darkTheme from '@ant-design/dark-theme';
+// import darkTheme from '@ant-design/dark-theme';
 
 export default defineConfig({
   hash: true,
   antd: {
-    dark: true,
+    compact: true,
+    //   dark: true,
   },
   dva: {
     hmr: true,
@@ -40,7 +41,7 @@ export default defineConfig({
   routes,
   // Theme for antd: https://ant.design/docs/react/customize-theme-cn
   theme: {
-    ...darkTheme,
+    // ...darkTheme,
     'root-entry-name': 'variable',
   },
   // esbuild is father build tools

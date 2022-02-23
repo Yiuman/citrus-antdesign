@@ -1,10 +1,11 @@
 // https://umijs.org/config/
 import { defineConfig } from 'umi';
-import darkTheme from '@ant-design/dark-theme';
+// import darkTheme from '@ant-design/dark-theme';
 
 export default defineConfig({
   antd: {
-    dark: true,
+    compact: true,
+    //   dark: true,
   },
   plugins: [
     // https://github.com/zthxxx/react-dev-inspector
@@ -17,7 +18,7 @@ export default defineConfig({
     baseNavigator: true,
   },
   theme: {
-    ...darkTheme,
+    // ...darkTheme,
     'root-entry-name': 'variable',
   },
   // https://github.com/zthxxx/react-dev-inspector#inspector-loader-props

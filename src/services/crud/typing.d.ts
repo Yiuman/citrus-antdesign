@@ -42,11 +42,26 @@ declare namespace API {
     widgets: Widget[];
   };
 
+  type EditField = {
+    text?: string;
+    name?: string;
+    widget: Widget;
+    rules?: string[];
+  };
+
+  type FormView<Entity> = {
+    title?: string;
+    data?: Entity;
+    editFields: EditField[];
+    widgets?: Widget[];
+    buttons?: Widget[];
+  };
+
   type PageQuery = {
-    size: number;
-    current: number;
-    sortBy: string | undefined;
-    sortDesc: boolean | undefined;
+    size?: number;
+    current?: number;
+    sortBy?: string | undefined;
+    sortDesc?: boolean | undefined;
   };
 
   type CRUD<ENTITY, KEY> = {
@@ -63,6 +78,7 @@ declare namespace API {
     //分页查询
     page: (queryParams?: PageQuery & Record<string, any>) => Promise<Page<ENTITY>>;
     view: (queryParams?: PageQuery & Record<string, any>) => Promise<TableView<ENTITY>>;
+    form: (key: KEY) => Promise<FormView<ENTITY>>;
     //导出
     exp: (queryParams: any) => Promise<Blob>;
     //导入
